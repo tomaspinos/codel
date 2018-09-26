@@ -1,4 +1,4 @@
-package org.codel.state;
+package org.codel.state.model;
 
 public enum StateType {
 

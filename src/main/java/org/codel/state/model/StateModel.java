@@ -1,4 +1,4 @@
-package org.codel.state;
+package org.codel.state.model;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;

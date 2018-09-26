@@ -1,10 +1,15 @@
-package org.codel.state;
+package org.codel;
 
+import org.codel.state.StateDiagram;
+import org.codel.state.model.StateModel;
+import org.codel.state.model.StateModelBuilder;
+import org.codel.state.renderer.StateDiagramPlantUmlRenderer;
 import org.junit.Test;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
@@ -44,23 +49,33 @@ public class StateModelBuilderTest {
     public void x() throws IOException {
         StateDiagram<StateEnum> diagram = new StateDiagram<>(createSampleModel());
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("state.puml"))) {
-            new StateDiagramPlantUmlRenderer<StateEnum>().render(diagram, writer);
+        try (OutputStream outputStream = new FileOutputStream("state.puml")) {
+            new StateDiagramPlantUmlRenderer<StateEnum>().render(diagram, outputStream);
         }
     }
 
     private StateModel<StateEnum> createSampleModel() {
-        return StateModelBuilder.fromEnum(StateEnum.class)
+        return StateModelBuilder.fromEnum(StateEnum.class,
+                stateEnum -> {
+                    switch (stateEnum) {
+                        case A:
+                            return Optional.of("It all starts with state A");
+                        case E:
+                            return Optional.of("It all ends with state E");
+                        default:
+                            return Optional.empty();
+                    }
+                })
                 .initialState()
                 .finalState()
-                .transitionFromInitialState(StateEnum.A)
+                .transitionFromInitialState(StateEnum.A, "Here we go")
                 .transition(StateEnum.A, StateEnum.B)
                 .transition(StateEnum.A, StateEnum.C)
                 .transition(StateEnum.B, StateEnum.D)
                 .transition(StateEnum.C, StateEnum.D)
                 .transition(StateEnum.D, StateEnum.E)
                 .transition(StateEnum.E, StateEnum.A)
-                .transitionToFinalState(StateEnum.E)
+                .transitionToFinalState(StateEnum.E, "Everything must come to an end")
                 .build();
     }
 
