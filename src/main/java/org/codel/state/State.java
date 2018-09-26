@@ -1,16 +1,10 @@
 package org.codel.state;
 
-import lombok.Data;
+public interface State<T> {
 
-import java.util.Objects;
+    String getName();
 
-@Data
-public class State<T> {
+    StateType getType();
 
-    private final T stateObject;
-    private final String name;
-
-    public boolean matches(T stateObject) {
-        return Objects.equals(this.stateObject, stateObject);
-    }
+    boolean matches(T stateObject);
 }
